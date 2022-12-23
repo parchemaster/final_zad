@@ -1,0 +1,45 @@
+canvas {
+    border: 1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+
+body {
+    height: 100vh;
+    background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80');
+}
+
+.menu {
+    display: grid;
+    grid-template-columns: minmax(200px, 800px);
+    gap: 10%;
+    justify-content: center;
+    margin-top: 10%;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+.link {
+    text-decoration: none;
+    padding: 2%;
+    border-radius: 5px;
+    text-align: center;
+    color: #FFE81F;
+    font-family: 'Star Wars', sans-serif;
+    background-color: rgba(0, 0, 0, 0.819);
+}
+.quests {
+    margin-left: 80%;
+    margin-top: 0%;
+    position:absolute;
+    text-decoration: none;
+    padding: 2%;
+    border-radius: 5px;
+    text-align: center;
+    color: #FFE81F;
+    font-family: 'Star Wars', sans-serif;
+    background-color: rgba(0, 0, 0, 0.819);
+}
+
+a:hover {
+    background-color: rgba(0, 0, 0, 0.137);
+}
