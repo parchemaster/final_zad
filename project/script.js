@@ -6,6 +6,52 @@ var playerBlaster = [];
 var myBackground;
 var QuestKillMobs = 0;
 var pause_game = false;
+var myTotalScore;
+var myHpScore;
+var angel;
+function detectMob() {
+    const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+
+    return toMatch.some((toMatchItem) => {
+        return navigator.userAgent.match(toMatchItem);
+    });
+}
+
+
+function checkDevice() {
+    if (detectMob()) {
+        console.log("asd")
+        window.location.href = "mobile-game.html";
+    }
+    else {
+
+        startGame()
+    }
+}
+
+function startGyroscopeGame() {
+    let sensor = new Gyroscope();
+    sensor.start();
+
+    // sensor.onreading = () => {
+    //     document.getElementById("gyroscope-z").textContent = "Z: " + sensor.z
+    //     document.getElementById("gyroscope-x").textContent = "X: " + sensor.x
+    //     document.getElementById("gyroscope-y").textContent = "Y: " + sensor.y
+    // };
+
+    sensor.onerror = event => console.log(event.error.name, event.error.message);
+
+}
+
+
 function startGame() {
     myGameArea.start();
     
@@ -15,12 +61,23 @@ function startGame() {
     myBackground = new background(innerWidth, innerHeight, "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80", 0, 0, "background");
     //myGameEnemy =  new enemy(75,75, "https://pngimg.com/uploads/starwars/starwars_PNG53.png", 100, 0, "image");
     //<p class="quests">Enemies killed:<span id= "killedMobs"></span></p>
+    myTotalScore = new info(innerWidth / 10, innerHeight / 12, "text");
+    myHpScore = new info(innerWidth / 10, innerHeight / 8, "text");
 
 }
-
-// this.canvas.width = document.body.clientWidth;
-// this.canvas.height = window.innerHeight;
-
+function info(x, y, type) {
+    this.type = type;
+    this.x = x;
+    this.y = y;
+    this.update = function () {
+        ctx = myGameArea.context;
+        if (this.type == "text") {
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "white";
+            ctx.fillText(this.text, this.x, this.y);
+        }
+    }
+}
 var myGameArea = {
     canvas: document.createElement("canvas"),
     start: function () {
@@ -40,6 +97,7 @@ var myGameArea = {
         window.addEventListener('space', function (e) {
             myGameArea.keys = (myGameArea.keys || []);
         })
+        
     },
     clear: function () {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -49,7 +107,55 @@ var myGameArea = {
     },
     resume: function(){
         this.interval = setInterval(updateGameArea, 20);
-    }
+    },
+    pauseMenu: function(){
+        
+        this.context.fillStyle = "rgba(0, 0, 0, 0.819)";
+        this.context.fillRect(this.canvas.width/4, this.canvas.height/4, this.canvas.width/2, this.canvas.height/2);
+        this.context.fillStyle = "rgba(21, 21, 21, 21.819)";
+        this.context.fillRect(this.canvas.width/4, this.canvas.height/4, this.canvas.width/2, this.canvas.height/10);
+        this.context.font = "bold 25px Star Wars sans-serif";
+        this.context.fillStyle = "#FFE81F";
+        
+        this.context.fillText("Game is paused",((this.canvas.width/2) - 80), (this.canvas.height/3.25));
+        this.context.fillStyle = "rgba(0, 0, 0, 0.819)";
+        this.context.font = "bold 20px Star Wars sans-serif";
+        this.context.fillStyle = "#FFE81F";
+        this.context.fillText("Give Up",((this.canvas.width/2)-80), (this.canvas.height/2.5));
+        this.context.fillText("Back to Menu",((this.canvas.width/2)-80), (this.canvas.height/2));
+        this.context.fillText("Quests",((this.canvas.width/2)-80), (this.canvas.height/1.7));
+
+        const Menu = new Path2D();
+        const GiveUp = new Path2D();
+        const Quests = new Path2D();
+        Menu.rect(this.canvas.width/4, this.canvas.height/2.2, this.canvas.width/2, this.canvas.height/12);
+        GiveUp.rect(this.canvas.width/4, this.canvas.height/2.8, this.canvas.width/2, this.canvas.height/12);
+        Quests.rect(this.canvas.width/4, this.canvas.height/1.8, this.canvas.width/2, this.canvas.height/12);
+        this.context.fillStyle = "#ffffff00";
+        this.context.fill(Menu);
+        this.context.fill(GiveUp);
+        this.context.fill(Quests);
+        
+        
+        this.canvas.addEventListener('click', function(event) {
+            // Check whether point is inside correct rect
+            if (myGameArea.context.isPointInPath(Menu, event.offsetX, event.offsetY)) {
+                window.location.href = "index.html";
+
+            }
+            else if (myGameArea.context.isPointInPath(GiveUp, event.offsetX, event.offsetY)){
+                window.location.href = "game_is_over.html";
+            }
+            else if (myGameArea.context.isPointInPath(Quests, event.offsetX, event.offsetY)){
+                window.location.href = "quests.html";
+            }
+        
+          });
+        
+        
+        }
+        
+
 }
 
 function everyinterval(n) {
@@ -67,13 +173,14 @@ function CheckIfDestroyed(obstacle) {
             if (checkObstaclesDestroyed(obstacle, myObstacles[i]))
             {
                 QuestKillMobs++;
-                console.log(QuestKillMobs);
+                //console.log(QuestKillMobs);
                 myObstacles[i].vx = -500;
                 myObstacles[i].vy = -500;
                 myObstacles[i].width = -1;
                 myObstacles[i].height = -1;
                 obstacle.vx = -500;
                 obstacle.vy = -500;
+                updateScore();
             }
         }
         
@@ -85,6 +192,7 @@ function CheckIfDestroyed(obstacle) {
         
         if(myGamePiece.hp <= 0)
         {
+        updateScore(1);
         myGameArea.clear();
         myGameArea.stop();
         myGamePiece.destroy();
@@ -120,6 +228,16 @@ document.addEventListener('keydown', function (e) {
            
     }
 })
+let sensor = new Gyroscope();
+sensor.start();
+sensor.onreading = () => {
+    myGamePiece.x -= sensor.z * 80;
+};
+// myGamePiece.x -= angel
+sensor.onerror = errorHandler;
+function errorHandler(event) {
+    console.log(event.error.name, event.error.message);
+}
 function updateGameArea() {
     var x, y;
     var weapon_id = 0;
@@ -169,7 +287,7 @@ function updateGameArea() {
     /*if (myGameArea.keys && myGameArea.keys[27]) {
         pause();
     }*/
-    
+   
     
     myBackground.newPos();
     myBackground.update();
@@ -196,7 +314,11 @@ function updateGameArea() {
             CheckIfDestroyed(j); 
         }
     }
-    
+    myTotalScore.text = "Total killed for game: " + QuestKillMobs;
+    myHpScore.text = "HP: " + myGamePiece.hp;
+
+    myHpScore.update();
+    myTotalScore.update();
     myBackground.speedY = 1;
 }
 function getRandomEnemyPosition(minGap, maxGap) {
@@ -280,10 +402,6 @@ function enemy(width,height, url, x, y, type)
     this.vx= 0.0;
     this.vy= 2.5;
     this.name = "enemy";
-	this.origin = {
-			x: x,
-			y: y
-		};
     this.update = function () {
         ctx = myGameArea.context;
         
@@ -469,16 +587,64 @@ function GameIsOver()
 {
     window.location.href = "game_is_over.html";
 }
+
+
 function pause()
 {
     if(pause_game == false)
     {
     pause_game = true;
+    
     myGameArea.stop();
+    myGameArea.pauseMenu();
+    
     }
     else{
         pause_game = false;
         myGameArea.resume();
     }
 
+    
+}
+function checkUser() {
+    user = window.localStorage.getItem('user');
+    if (user) {
+        // location.replace("menu.html")
+        window.location.href = "menu.html";
+
+    }
+    else {
+        // location.replace("nickname.html")
+        window.location.href = "nickname.html";
+    }
+}
+
+function submiteForm() {
+    var nickname = document.getElementById("nickname").value
+
+    const newUser = {
+        name: nickname,
+        score: 0,
+        dies: 0
+    }
+
+    if (nickname) {
+        window.localStorage.setItem('user', JSON.stringify(newUser));
+        // location.replace("menu.html")
+        window.location.href = "menu.html";
+
+    }
+}
+
+function updateScore(die) {
+    var user = JSON.parse(localStorage.getItem('user'));
+    nickname = user['name']
+    death = user['dies']
+    score = user['score'];
+    var newUser = {
+        name: nickname,
+        score: QuestKillMobs > score ? QuestKillMobs : score,
+        dies: death + die
+    }
+    localStorage.setItem("user", JSON.stringify(newUser));
 }
