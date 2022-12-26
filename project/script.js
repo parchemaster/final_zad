@@ -9,6 +9,7 @@ var pause_game = false;
 var myTotalScore;
 var myHpScore;
 var angel;
+var isGyroscopeGame;
 function detectMob() {
     const toMatch = [
         /Android/i,
@@ -28,30 +29,33 @@ function detectMob() {
 
 function checkDevice() {
     if (detectMob()) {
-        console.log("asd")
+        
         window.location.href = "mobile-game.html";
     }
     else {
 
-        startGame()
+        startGame();
     }
 }
 
+
 function startGyroscopeGame() {
-    let sensor = new Gyroscope();
-    sensor.start();
-
-    // sensor.onreading = () => {
-    //     document.getElementById("gyroscope-z").textContent = "Z: " + sensor.z
-    //     document.getElementById("gyroscope-x").textContent = "X: " + sensor.x
-    //     document.getElementById("gyroscope-y").textContent = "Y: " + sensor.y
-    // };
-
-    sensor.onerror = event => console.log(event.error.name, event.error.message);
-
+    isGyroscopeGame = true;
+    if (isGyroscopeGame) {
+        let sensor = new Gyroscope();
+        sensor.start();
+        sensor.onreading = () => {
+            myGamePiece.x += sensor.y * 80;
+            myGamePiece.y += sensor.x * 30;
+        };
+        // myGamePiece.x -= angel
+        sensor.onerror = errorHandler;
+        function errorHandler(event) {
+            console.log(event.error.name, event.error.message);
+        }
+    }
+    startGame();
 }
-
-
 function startGame() {
     myGameArea.start();
     
@@ -90,13 +94,54 @@ var myGameArea = {
         window.addEventListener('keydown', function (e) {
             myGameArea.keys = (myGameArea.keys || []);
             myGameArea.keys[e.keyCode] = true;
-        })
+        });
         window.addEventListener('keyup', function (e) {
             myGameArea.keys[e.keyCode] = false;
-        })
+        });
         window.addEventListener('space', function (e) {
             myGameArea.keys = (myGameArea.keys || []);
-        })
+        });
+
+        window.addEventListener('click', function (e) {
+            blaster = new blast("https://www.pngarts.com/files/11/Green-Laser-PNG-Image.png", "image", myGamePiece.x, myGamePiece.y - 10);
+            myGamePiece.newPos();
+            playerBlaster.push(blaster);
+        });
+        window.onmousedown = function(event) {
+    
+            function moveAt(pageX, pageY) {
+              myGamePiece.x = pageX - myGamePiece.width/2;
+              myGamePiece.y = pageY - myGamePiece.height/2;
+            }
+          
+            // move ship under the pointer
+            moveAt(event.pageX, event.pageY);
+          
+            function onMouseMove(event) {
+              moveAt(event.pageX, event.pageY);
+            }
+          
+            //  move the ship on mousemove
+            window.addEventListener('mousemove', onMouseMove);
+          
+            // drop the ship, remove unneeded handlers
+            window.onmouseup = function() {
+              //alert(pageX);
+              window.removeEventListener('mousemove', onMouseMove);
+              window.onmouseup = null;
+            };
+          
+          };
+          window.ondragstart = function(){
+              return false;
+          };
+        //drag
+        if (detectMob && !isGyroscopeGame) {
+            window.addEventListener('touchmove', function (e) {
+                myGameArea.x = e.touches[0].screenX;
+                myGameArea.y = e.touches[0].screenY;
+            })
+        }
         
     },
     clear: function () {
@@ -108,6 +153,7 @@ var myGameArea = {
     resume: function(){
         this.interval = setInterval(updateGameArea, 20);
     },
+    
     pauseMenu: function(){
         
         this.context.fillStyle = "rgba(0, 0, 0, 0.819)";
@@ -140,7 +186,7 @@ var myGameArea = {
         this.canvas.addEventListener('click', function(event) {
             // Check whether point is inside correct rect
             if (myGameArea.context.isPointInPath(Menu, event.offsetX, event.offsetY)) {
-                window.location.href = "index.html";
+                window.location.href = "menu.html";
 
             }
             else if (myGameArea.context.isPointInPath(GiveUp, event.offsetX, event.offsetY)){
@@ -228,16 +274,7 @@ document.addEventListener('keydown', function (e) {
            
     }
 })
-let sensor = new Gyroscope();
-sensor.start();
-sensor.onreading = () => {
-    myGamePiece.x -= sensor.z * 80;
-};
-// myGamePiece.x -= angel
-sensor.onerror = errorHandler;
-function errorHandler(event) {
-    console.log(event.error.name, event.error.message);
-}
+
 function updateGameArea() {
     var x, y;
     var weapon_id = 0;
@@ -284,15 +321,19 @@ function updateGameArea() {
         playerBlaster.push(blaster);
     }
     
-    /*if (myGameArea.keys && myGameArea.keys[27]) {
-        pause();
-    }*/
-   
+    //drag 
+    if (myGameArea.x && myGameArea.y) {
+        myGamePiece.x = myGameArea.x;
+        myGamePiece.y = myGameArea.y;
+    }
+
     
     myBackground.newPos();
     myBackground.update();
+    //myGamePiece.onmousedown();
     myGamePiece.newPos();
     myGamePiece.update();
+    
     playerBlaster.forEach(blast => {
         blast.newPos()
         blast.update()
@@ -474,13 +515,10 @@ function ship(url, type) {
             if (type == "background") {
                 ctx.drawImage(this.image, this.x, this.y - this.height, this.width, this.height);
             }
-        }
-
-        // else {
-        //     ctx.fillStyle = color;
-        //     ctx.fillRect(this.x, this.y, this.width, this.height);
-        // }
+        }  
+        
     }
+    
     this.destroy = function(){
         //startGame();
         window.location.href = "game_is_over.html";
@@ -581,7 +619,7 @@ function TryAgain()
 }
 function BackToMenu()
 {
-    window.location.href = "index.html";
+    window.location.href = "menu.html";
 }
 function GameIsOver()
 {

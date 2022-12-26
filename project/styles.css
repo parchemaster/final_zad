@@ -10,12 +10,19 @@ body {
 
 .menu {
     display: grid;
-    grid-template-columns: minmax(200px, 800px);
+    grid-template-columns: minmax(300px, 800px);
     gap: 10%;
     justify-content: center;
-    margin-top: 10%;
+    /* margin-top: 20%; */
     margin-left: 30%;
     margin-right: 30%;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .link {
@@ -27,19 +34,75 @@ body {
     font-family: 'Star Wars', sans-serif;
     background-color: rgba(0, 0, 0, 0.819);
 }
-.quests {
-    margin-left: 80%;
-    margin-top: 0%;
-    position:absolute;
-    text-decoration: none;
-    padding: 2%;
-    border-radius: 5px;
-    text-align: center;
-    color: #FFE81F;
-    font-family: 'Star Wars', sans-serif;
-    background-color: rgba(0, 0, 0, 0.819);
-}
 
 a:hover {
     background-color: rgba(0, 0, 0, 0.137);
+}
+
+h1 {
+    margin: 20px 0 10px 0;
+    font-size: 3rem;
+    font-weight: 400;
+    font-family: 'Poppins', sans-serif;
+}
+
+h4 {
+    margin: 20px 0 5px 0;
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+h2 {
+    color: #FFE81F;
+}
+
+input {
+    color: #FFE81F;
+    font-family: 'Star Wars', sans-serif;
+    width: 100%;
+    font-size: 1.1rem;
+    font-weight: 300;
+    padding: 7px 0;
+    border: none;
+    background-color: inherit;
+}
+
+::placeholder {
+    color: #FFE81F;
+    opacity: 1;
+}
+
+.username-input,
+.password-input {
+    /* width: 90%; */
+    border-bottom: 1px solid #FFE81F;
+    margin-bottom: 10%;
+}
+
+.submite-input {
+    border: 1px solid #FFE81F;
+    margin-bottom: 10%;
+}
+
+.submit-button {
+    text-align: center;
+}
+
+.submite-input :active {
+    background-color: #FFE81F;
+    color: black;
+}
+
+i {
+    /* width: 10%; */
+    color: rgba(0, 0, 0, 0.3);
+    padding-right: 7px;
+}
+
+.login-form>p {
+    /* width: 90%; */
+    font-size: 1.1rem;
+    text-align: right;
+    margin-top: 5px;
+    font-weight: 300;
 }
