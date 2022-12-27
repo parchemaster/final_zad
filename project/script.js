@@ -1,5 +1,4 @@
 var myGamePiece;
-var myGameEnemy;
 var myObstacles = [];
 var Weapons = [[]];
 var playerBlaster = [];
@@ -8,22 +7,14 @@ var QuestKillMobs = 0;
 var pause_game = false;
 var myTotalScore;
 var myHpScore;
-var angel;
 var isGyroscopeGame;
 var myBoss;
 var bossAppearKills = 10;
 var bossWeapon = [];
-var level_info = {
-    difficulty: "",
-    enemy_hp: 0,
-    player_hp: 0,
-    boss_hp: 0,
-    enemy_speed_vy: 0,
-    enemy_speed_vx: 0,
-    enemy_respawn_frequency: 0
-};
-var number_difficulty_chosen = 1;
-var boss_hp_new;
+var number_difficulty_chosen = 0;
+
+
+
 function detectMob() {
     const toMatch = [
         /Android/i,
@@ -48,13 +39,71 @@ function checkDevice() {
     }
     else {
 
-        startGame();
+        window.location.href = "difficulty_choose.html";
     }
 }
 
+    function d1()
+    {
+        
+        number_difficulty_chosen = 0;
+        
+        startGame();
+        
+        
+    }
+      function d2()
+    {
+        
+            number_difficulty_chosen = 1;
+            
+            startGame();
+            
+        
+    }
+      function d3()
+    {
+        
+            number_difficulty_chosen = 2;
+            
+            startGame();
+            
+    }
+      function d4()
+    {
+        
+            number_difficulty_chosen = 3;
+            
+            startGame();
+            
+    }
+      function d5()
+    {
+        
+            number_difficulty_chosen = 4;
+            
+            startGame();
+            
+    }
 
-function startGyroscopeGame() {
+
+    async function fetchLevels() {
+        response = await fetch("levels.json");
+
+        data =  await response.json();
+        
+        
+        window.localStorage.setItem('level', JSON.stringify(data));
+         
+    }
+    function GyroscopeHtml()
+    {
+        window.location.href = "difficulty_choose_gyroscope.html";
+    }
+
+function startGyroscopeGame(x) {
     isGyroscopeGame = true;
+    number_difficulty_chosen = x;
     if (isGyroscopeGame) {
         let sensor = new Gyroscope();
         sensor.start();
@@ -62,7 +111,6 @@ function startGyroscopeGame() {
             myGamePiece.x += sensor.y * 80;
             myGamePiece.y += sensor.x * 30;
         };
-        // myGamePiece.x -= angel
         sensor.onerror = errorHandler;
         function errorHandler(event) {
             console.log(event.error.name, event.error.message);
@@ -70,13 +118,19 @@ function startGyroscopeGame() {
     }
     startGame();
 }
+var current_level;
 function startGame() {
+    console.log(number_difficulty_chosen);
+    
+    
+    fetchLevels();
     myGameArea.start();
     
-    
-    
-    
-
+    level = JSON.parse(window.localStorage.getItem('level'));
+   
+    current_level = level.levels[number_difficulty_chosen];
+    console.log(current_level.difficulty);
+   
     myGamePiece = new ship("https://www.nicepng.com/png/full/36-365566_jedistarfighter-detail-star-wars-jedi-starfighter-top-view.png", "image");
     
     myBackground = new background(innerWidth, innerHeight, "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80", 0, 0, "background");
@@ -384,7 +438,7 @@ function updateGameArea() {
             myGameArea.canvas.click();
         }
     }
-    if (myGameArea.frameNo == 1 || everyinterval(25)) {
+    if (myGameArea.frameNo == 1 || everyinterval(current_level.enemy_respawn_frequency)) {
 
         x = myGameArea.canvas.width;
         minHeight = 20;
@@ -620,7 +674,7 @@ function boss(width,height, url, x, y, type)
     this.x = x;
     this.y = y;
     this.vx= 3.0;
-    this.hp = 50;
+    this.hp = current_level.boss_hp;
     this.vy= 0.0;
     this.Alive = false;
     this.Appeared = false;
@@ -690,10 +744,10 @@ function enemy(width,height, url, x, y, type)
     this.height = height;
     this.x = x + getRandomEnemyPosition(this.width/2,myGameArea.canvas.width-this.width*3);
     this.y = y;
-    this.vx= 0.0;
-    this.vy= 2.5;
-    this.hp = 1;
-
+    this.vx= current_level.enemy_speed_vx;
+    this.vy= current_level.enemy_speed_vy;
+    this.hp = current_level.enemy_hp;
+    this.direction = 1;
     this.name = "enemy";
     this.update = function () {
         ctx = myGameArea.context;
@@ -717,7 +771,7 @@ function enemy(width,height, url, x, y, type)
     }
    
     this.enemyMove = function() {
-        this.x += this.vx;
+        this.x += this.vx * this.direction;
         this.y += this.vy;
         
         if (this.type == "background") {
@@ -734,18 +788,20 @@ function enemy(width,height, url, x, y, type)
     this.hitBoundary = function () {
         var boundarybottom = myGameArea.canvas.height;
         var boundarytop = 0 + this.height;
-        var boundaryright = myGameArea.canvas.width;
-        var boundaryLeft = 0 - this.width;
+        var boundaryright = myGameArea.canvas.width - this.width;
+        var boundaryLeft = 0;
         /*if (this.y > boundarybottom) {
             this.y = boundarytop;
             //this.x = 0;
         }*/
         
-        if (this.x < boundaryLeft) {
-            this.x = boundaryright
+        if (this.x <= boundaryLeft) {
+            //this.x = boundaryright;
+            this.direction = 1;
         }
-        if (this.x > boundaryright) {
-            this.x = 0
+        if (this.x >= boundaryright) {
+            //this.x = 0;
+            this.direction = -1;
         }
     }
 }
@@ -762,7 +818,7 @@ function ship(url, type) {
     this.speedY = 0;
     this.x = myGameArea.canvas.width / 2 - this.width / 2;
     this.y = myGameArea.canvas.height - this.height / 2;
-    this.hp = 10;
+    this.hp = current_level.player_hp;
     this.update = function () {
         ctx = myGameArea.context;
         if (type == "image" || type == "background") {
