@@ -33,12 +33,13 @@ function detectMob() {
 
 
 function checkDevice() {
+
     if (detectMob()) {
-        
+        fetchLevels();
         window.location.href = "mobile-game.html";
     }
     else {
-
+        fetchLevels();
         window.location.href = "difficulty_choose.html";
     }
 }
@@ -123,7 +124,7 @@ function startGame() {
     console.log(number_difficulty_chosen);
     
     
-    fetchLevels();
+    //fetchLevels();
     myGameArea.start();
     
     level = JSON.parse(window.localStorage.getItem('level'));
