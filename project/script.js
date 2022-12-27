@@ -33,7 +33,7 @@ function detectMob() {
 
 
 function checkDevice() {
-
+    fetchLevels();
     if (detectMob()) {
         fetchLevels();
         window.location.href = "mobile-game.html";
@@ -48,7 +48,7 @@ function checkDevice() {
     {
         
         number_difficulty_chosen = 0;
-        
+        fetchLevels();
         startGame();
         
         
@@ -57,7 +57,7 @@ function checkDevice() {
     {
         
             number_difficulty_chosen = 1;
-            
+            fetchLevels();
             startGame();
             
         
@@ -66,7 +66,7 @@ function checkDevice() {
     {
         
             number_difficulty_chosen = 2;
-            
+            fetchLevels();
             startGame();
             
     }
@@ -74,7 +74,7 @@ function checkDevice() {
     {
         
             number_difficulty_chosen = 3;
-            
+            fetchLevels();
             startGame();
             
     }
@@ -82,7 +82,7 @@ function checkDevice() {
     {
         
             number_difficulty_chosen = 4;
-            
+            fetchLevels();
             startGame();
             
     }
@@ -982,7 +982,7 @@ function checkUser() {
 
 function submiteForm() {
     var nickname = document.getElementById("nickname").value
-
+    fetchLevels();
     const newUser = {
         name: nickname,
         score: 0,
@@ -999,6 +999,7 @@ function submiteForm() {
 
 function updateScore(die) {
     var user = JSON.parse(localStorage.getItem('user'));
+  
     nickname = user['name']
     death = user['dies']
     score = user['score'];
