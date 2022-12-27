@@ -209,6 +209,7 @@ var myGameArea = {
               return false;
           };
         }
+        
         //drag
         if (detectMob && !isGyroscopeGame) {
             window.addEventListener('touchmove', function (e) {
@@ -355,9 +356,16 @@ function CheckIfDestroyed(obstacle) {
     //player crashs/gets hits, enemies crash
     if(checkObstaclesDestroyed(obstacle, myGamePiece) && obstacle.name != "blast" && obstacle.width != -1) {
         myGamePiece.hpChange();
-        if(obstacle.name == "boss" && obstacle.width != -1)
+        if(obstacle.name == "boss")
         {
             obstacle.hpChange();
+            if (obstacle.hp <= 0){
+                QuestKillMobs++;
+                obstacle.vx = -500;
+                obstacle.vy = -500;
+                obstacle.width = -1;
+                obstacle.height = -1;
+                }
         }
         if(myGamePiece.hp <= 0)
         {
@@ -416,6 +424,8 @@ function CheckIfDestroyed(obstacle) {
             obstacle.height = -1;
             }
         }
+        
+        
     }
 }
 document.addEventListener('keydown', function (e) {
@@ -538,6 +548,7 @@ function updateGameArea() {
        {
             myBoss.bossMove();
             myBoss.update();
+            CheckIfDestroyed(myBoss); 
             
             for (let i of bossWeapon) {
                 
