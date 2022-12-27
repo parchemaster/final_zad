@@ -31,7 +31,7 @@
         {
             "difficulty": "master",
             "enemy_hp": 2,
-            "player_hp": 3,
+            "player_hp": 4,
             "boss_hp": 120,
             "enemy_speed_vy": 1.5,
             "enemy_speed_vx": 4.5,

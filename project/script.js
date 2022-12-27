@@ -134,7 +134,7 @@ function startGame() {
    
     myGamePiece = new ship("https://www.nicepng.com/png/full/36-365566_jedistarfighter-detail-star-wars-jedi-starfighter-top-view.png", "image");
     
-    myBackground = new background(innerWidth, innerHeight, "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80", 0, 0, "background");
+    myBackground = new background(window.innerWidth - 10, window.innerHeight- 10, "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80", 0, 0, "background");
     myBoss = new boss(250,250,"images/deathstar.png", innerWidth/2, 0, "image");
     
     myTotalScore = new info(innerWidth / 10, innerHeight / 12, "text");
@@ -157,8 +157,8 @@ function info(x, y, type) {
 var myGameArea = {
     canvas: document.createElement("canvas"),
     start: function () {
-        this.canvas.width = innerWidth;
-        this.canvas.height = innerHeight;
+        this.canvas.width = window.innerWidth - 10;
+        this.canvas.height = window.innerHeight - 10;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
@@ -905,8 +905,8 @@ function background(width, height, url, x, y, type) {
         }
     }
     this.newPos = function () {
-        this.x += this.speedX;
-        this.y += this.speedY;
+        this.x += this.speedX*1;
+        this.y += this.speedY*1;
         if (this.type == "background") {
             if (this.y == (this.height)) {
                 this.y = 0;
