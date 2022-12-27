@@ -10,6 +10,20 @@ var myTotalScore;
 var myHpScore;
 var angel;
 var isGyroscopeGame;
+var myBoss;
+var bossAppearKills = 10;
+var bossWeapon = [];
+var level_info = {
+    difficulty: "",
+    enemy_hp: 0,
+    player_hp: 0,
+    boss_hp: 0,
+    enemy_speed_vy: 0,
+    enemy_speed_vx: 0,
+    enemy_respawn_frequency: 0
+};
+var number_difficulty_chosen = 1;
+var boss_hp_new;
 function detectMob() {
     const toMatch = [
         /Android/i,
@@ -59,12 +73,15 @@ function startGyroscopeGame() {
 function startGame() {
     myGameArea.start();
     
+    
+    
+    
 
     myGamePiece = new ship("https://www.nicepng.com/png/full/36-365566_jedistarfighter-detail-star-wars-jedi-starfighter-top-view.png", "image");
-    //myGameEnemy = new enemy(75,75, "https://pngimg.com/uploads/starwars/starwars_PNG53.png", 100, 0, "image");
+    
     myBackground = new background(innerWidth, innerHeight, "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80", 0, 0, "background");
-    //myGameEnemy =  new enemy(75,75, "https://pngimg.com/uploads/starwars/starwars_PNG53.png", 100, 0, "image");
-    //<p class="quests">Enemies killed:<span id= "killedMobs"></span></p>
+    myBoss = new boss(250,250,"images/deathstar.png", innerWidth/2, 0, "image");
+    
     myTotalScore = new info(innerWidth / 10, innerHeight / 12, "text");
     myHpScore = new info(innerWidth / 10, innerHeight / 8, "text");
 
@@ -104,9 +121,11 @@ var myGameArea = {
 
         window.addEventListener('click', function (e) {
             blaster = new blast("https://www.pngarts.com/files/11/Green-Laser-PNG-Image.png", "image", myGamePiece.x, myGamePiece.y - 10);
-            myGamePiece.newPos();
+            //myGamePiece.newPos();
+            //myGamePiece.update();
             playerBlaster.push(blaster);
         });
+        if(!detectMob()){
         window.onmousedown = function(event) {
     
             function moveAt(pageX, pageY) {
@@ -135,11 +154,14 @@ var myGameArea = {
           window.ondragstart = function(){
               return false;
           };
+        }
         //drag
         if (detectMob && !isGyroscopeGame) {
             window.addEventListener('touchmove', function (e) {
                 myGameArea.x = e.touches[0].screenX;
                 myGameArea.y = e.touches[0].screenY;
+                //myGamePiece.newPos();
+                //myGamePiece.update();
             })
         }
         
@@ -211,31 +233,78 @@ function everyinterval(n) {
 function CheckIfDestroyed(obstacle) {
 
 
-    // player vs enemies
-    if(obstacle.name == "blast")
+    // player vs enemies/boss
+    if(obstacle.name == "blast" && obstacle.width != -1)
     {
         for (i = 0; i < myObstacles.length; i++)
         {
             if (checkObstaclesDestroyed(obstacle, myObstacles[i]))
             {
+                
+                myObstacles[i].hpChange();
+                obstacle.vx = -500;
+                obstacle.vy = -500;
+                obstacle.width = -1;
+                obstacle.height = -1;
+                if (myObstacles[i].hp <= 0)
+                {
                 QuestKillMobs++;
-                //console.log(QuestKillMobs);
+                
+                obstacle.vx = -500;
+                obstacle.vy = -500;
+                obstacle.width = -1;
+                obstacle.height = -1;
                 myObstacles[i].vx = -500;
                 myObstacles[i].vy = -500;
                 myObstacles[i].width = -1;
                 myObstacles[i].height = -1;
                 obstacle.vx = -500;
                 obstacle.vy = -500;
+                obstacle.width = -1;
+                obstacle.height = -1;
                 updateScore();
+                }
+                
+               
             }
         }
+        if(QuestKillMobs == bossAppearKills && myBoss.Appeared){
+        if (checkObstaclesDestroyed(obstacle,myBoss))
+        {
+            if(myBoss.hp > 0){
+                myBoss.hpChange();
+                obstacle.vx = -500;
+                obstacle.vy = -500;
+                obstacle.width = -1;
+                obstacle.height = -1;
+                console.log(myBoss.hp);
+            }
+            else{
+                QuestKillMobs++;
+                myBoss.vx = -500;
+                myBoss.vy = -500;
+                myBoss.width = -1;
+                myBoss.height = -1;
+                obstacle.vx = -500;
+                obstacle.vy = -500;
+                obstacle.width = -1;
+                obstacle.height = -1;
+                myBoss.Alive = false;
+                myBoss.Appeared = false;
+            }
+           
+        }
+    }
         
         
     }
     //player crashs/gets hits, enemies crash
-    if(checkObstaclesDestroyed(obstacle, myGamePiece) && obstacle.name != "blast") {
+    if(checkObstaclesDestroyed(obstacle, myGamePiece) && obstacle.name != "blast" && obstacle.width != -1) {
         myGamePiece.hpChange();
-        
+        if(obstacle.name == "boss" && obstacle.width != -1)
+        {
+            obstacle.hpChange();
+        }
         if(myGamePiece.hp <= 0)
         {
         updateScore(1);
@@ -246,6 +315,8 @@ function CheckIfDestroyed(obstacle) {
         {
             myObstacles[i].vx = -500;
             myObstacles[i].vy = -500;
+            myObstacles[i].width = -1;
+            myObstacles[i].height = -1;
         }
         for (let i of Weapons) {
             for (let j of i) {
@@ -255,15 +326,41 @@ function CheckIfDestroyed(obstacle) {
                 j.height = -1;
             }
         }
+        for (let i of bossWeapon) {
+            
+                i.vx = -500;
+                i.vy = -500;
+                i.width = -1;
+                i.height = -1;
+            
+        }
         myObstacles = [];
         Weapons =[[]];
+        bossWeapon = [];
+        myBoss.vx = -500;
+        myBoss.vy = -500;
+        myBoss.width = -1;
+        myBoss.height = -1;
+        
         }
-        else{
+        else if (obstacle.name != "boss" && obstacle.name != "enemy"){
             
             obstacle.vx = -500;
             obstacle.vy = -500;
             obstacle.width = -1;
             obstacle.height = -1;
+            
+        }
+        else if (obstacle.name == "enemy")
+        {   
+            obstacle.hpChange();
+            if (obstacle.hp <= 0){
+            QuestKillMobs++;
+            obstacle.vx = -500;
+            obstacle.vy = -500;
+            obstacle.width = -1;
+            obstacle.height = -1;
+            }
         }
     }
 }
@@ -281,28 +378,73 @@ function updateGameArea() {
     
     myGameArea.clear();
     myGameArea.frameNo += 1;
-    if (myGameArea.frameNo == 1 || everyinterval(100)) {
+    if(myGameArea.frameNo == 1 || everyinterval(6))
+    {
+        if (myGameArea.keys && myGameArea.keys[32]) {
+            myGameArea.canvas.click();
+        }
+    }
+    if (myGameArea.frameNo == 1 || everyinterval(25)) {
+
         x = myGameArea.canvas.width;
         minHeight = 20;
         maxHeight = 200;
         height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
         
-        
-        var Enemy = new enemy(75,75, "https://pngimg.com/uploads/starwars/starwars_PNG53.png", 100, 100, "image");
+        if (QuestKillMobs < bossAppearKills || QuestKillMobs > bossAppearKills){
+        var Enemy = new enemy(45,45, "https://pngimg.com/uploads/starwars/starwars_PNG53.png", 100, 100, "image");
         myObstacles.push(Enemy);
         
         for (i = 0; i < myObstacles.length; i+=1){
-            var weapon1 = new weapon(15,15,myObstacles[i].x+28,myObstacles[i].y+50,4,"https://t3.ftcdn.net/jpg/01/38/42/78/360_F_138427844_Aft7zkJlMICxCMNl5qYheOGX1PEhgSKg.jpg","image");
+            var weapon1 = new weapon(11,11,myObstacles[i].x+18,myObstacles[i].y+40,5,"https://t3.ftcdn.net/jpg/01/38/42/78/360_F_138427844_Aft7zkJlMICxCMNl5qYheOGX1PEhgSKg.jpg","image");
             Weapons[weapon_id].push(weapon1);   
         }
         weapon_id = myObstacles.length;
-    }
-   
-    if (QuestKillMobs == 50)
+        bossWeapon = [];
+        }
+        else{
+            for (i = 0; i < 3; i+=1){
+                var weapon2 = new weapon(20,20,myBoss.x+43 + (i*22),myBoss.y+250,7,"images/gr_true.png","image");
+                bossWeapon.push(weapon2);   
+           }
+           
+        }
+    
+    
+    }   
+    
+    if (QuestKillMobs == 100)
     {
         QuestKillMobs = 0;
         GameIsOver();
     }
+
+    if (QuestKillMobs == bossAppearKills && myBoss.Alive == false )
+    {
+       
+        for(i = 0; i < myObstacles.length; i++)
+        {
+            myObstacles[i].vx = -500;
+            myObstacles[i].vy = -500;
+            myObstacles[i].width = -1;
+            myObstacles[i].height = -1;
+        }
+        for (let i of Weapons) {
+            for (let j of i) {
+                j.vx = -500;
+                j.vy = -500;
+                j.width = -1;
+                j.height = -1;
+            }
+        }
+        myObstacles = [];
+        Weapons =[[]];
+        
+        myBoss.Alive = true;
+        myBoss.Appeared = true;
+               
+    }
+   
     myGamePiece.speedX = 0;
     myGamePiece.speedY = 0;
     if (myGameArea.keys && myGameArea.keys[37]) moveleft();
@@ -315,11 +457,7 @@ function updateGameArea() {
     if (myGameArea.keys && myGameArea.keys[87]) moveup();
     if (myGameArea.keys && myGameArea.keys[83]) movedown();
 
-    if (myGameArea.keys && myGameArea.keys[32]) {
-        blaster = new blast("https://www.pngarts.com/files/11/Green-Laser-PNG-Image.png", "image", myGamePiece.x, myGamePiece.y - 10);
-        myGamePiece.newPos();
-        playerBlaster.push(blaster);
-    }
+   
     
     //drag 
     if (myGameArea.x && myGameArea.y) {
@@ -334,6 +472,7 @@ function updateGameArea() {
     myGamePiece.newPos();
     myGamePiece.update();
     
+    
     playerBlaster.forEach(blast => {
         blast.newPos()
         blast.update()
@@ -341,6 +480,23 @@ function updateGameArea() {
         CheckIfDestroyed(blast);
         
     })
+    if (myBoss.Appeared == true)
+       {
+            myBoss.bossMove();
+            myBoss.update();
+            
+            for (let i of bossWeapon) {
+                
+
+                    i.move();
+                    i.update();
+                    CheckIfDestroyed(i); 
+                
+            }
+            
+       }
+    if (QuestKillMobs != bossAppearKills)
+    {
     for (i = 0; i < myObstacles.length; i += 1) {
         myObstacles[i].enemyMove();
         myObstacles[i].update();       
@@ -355,12 +511,14 @@ function updateGameArea() {
             CheckIfDestroyed(j); 
         }
     }
+}
     myTotalScore.text = "Total killed for game: " + QuestKillMobs;
     myHpScore.text = "HP: " + myGamePiece.hp;
 
     myHpScore.update();
     myTotalScore.update();
     myBackground.speedY = 1;
+    
 }
 function getRandomEnemyPosition(minGap, maxGap) {
     return Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
@@ -374,7 +532,7 @@ function blast(url, type, x, y) {
     this.width = 300 * .10;
     this.height = 300 * .10;
     this.speedX = 0;
-    this.speedY = -3;
+    this.speedY = -10;
     this.x = x;
     this.name = "blast";
     this.y = y;
@@ -387,8 +545,29 @@ function blast(url, type, x, y) {
     this.newPos = function () {
         this.x += this.speedX;
         this.y += this.speedY;
+        if (this.type == "background") {
+            if (this.y == (this.height)) {
+                this.y = 0;
+            }
 
+        }
+        else {
+            this.hitBoundary()
+        }
     }
+    this.hitBoundary = function () {
+    var boundarytop = 0 ;
+      
+      if(this.y == boundarytop)
+      {
+          this.width = -1;
+          this.height = -1;
+          this.x = -500;
+          this.y= -500;
+      }
+        
+    }
+
 }
 function weapon(width,height, x,y,speed, url, type)
 {
@@ -429,6 +608,77 @@ function checkObstaclesDestroyed(a,b)
 				b.y <= (a.y + a.height);
 	
 }
+function boss(width,height, url, x, y, type)
+{
+    this.type = type;
+    if (type == "image" || type == "background") {
+        this.image = new Image();
+        this.image.src = url;
+    }
+    this.width = width;
+    this.height = height;
+    this.x = x;
+    this.y = y;
+    this.vx= 3.0;
+    this.hp = 50;
+    this.vy= 0.0;
+    this.Alive = false;
+    this.Appeared = false;
+    this.direction = 1;
+    this.name = "boss";
+    this.update = function () {
+        ctx = myGameArea.context;
+        
+        if (type == "image" || type == "background") {
+            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            if (type == "background") { 
+                ctx.drawImage(this.image, this.x, this.y - this.height, this.width, this.height);
+            }
+        }
+
+    }
+        
+   
+    this.bossMove = function() {
+        this.x += this.vx * this.direction;
+        this.y += this.vy;
+        
+        if (this.type == "background") {
+            if (this.y == (this.height)) {
+                this.y = 0;
+            }
+
+        }
+        else {
+            this.hitBoundary()
+        }
+    }
+    this.hpChange = function()
+    {
+        this.hp--;
+    }
+    
+    this.hitBoundary = function () {
+        var boundarybottom = myGameArea.canvas.height;
+        var boundarytop = 0 + this.height;
+        var boundaryright = myGameArea.canvas.width - this.width;
+        var boundaryLeft = 0;
+        /*if (this.y > boundarybottom) {
+            this.y = boundarytop;
+            //this.x = 0;
+        }*/
+        
+        if (this.x <= boundaryLeft) {
+            //this.x = boundaryright;
+            this.direction = 1;
+        }
+        if (this.x >= boundaryright) {
+            //this.x = 0;
+            this.direction = -1;
+        }
+    }
+}
+
 function enemy(width,height, url, x, y, type)
 {
     this.type = type;
@@ -442,13 +692,15 @@ function enemy(width,height, url, x, y, type)
     this.y = y;
     this.vx= 0.0;
     this.vy= 2.5;
+    this.hp = 1;
+
     this.name = "enemy";
     this.update = function () {
         ctx = myGameArea.context;
         
         if (type == "image" || type == "background") {
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-            if (type == "background") {
+            if (type == "background") { 
                 ctx.drawImage(this.image, this.x, this.y - this.height, this.width, this.height);
             }
         }
@@ -459,6 +711,9 @@ function enemy(width,height, url, x, y, type)
     {
         this.isHit = true;
         this.vy = -200;
+    }
+    this.hpChange = function(){
+        this.hp--;
     }
    
     this.enemyMove = function() {

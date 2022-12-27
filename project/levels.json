@@ -1,0 +1,52 @@
+{
+    "levels": [
+        {
+            "difficulty": "youngling",
+            "enemy_hp": 1,
+            "player_hp": 10,
+            "boss_hp": 50,
+            "enemy_speed_vy": 2,
+            "enemy_speed_vx": 1,
+            "enemy_respawn_frequency": 150
+        },
+        {
+            "difficulty": "padawan",
+            "enemy_hp": 1,
+            "player_hp": 7,
+            "boss_hp": 80,
+            "enemy_speed_vy": 2.5,
+            "enemy_speed_vx": 1.5,
+            "enemy_respawn_frequency": 125
+            
+        },
+        {
+            "difficulty": "knight",
+            "enemy_hp": 2,
+            "player_hp": 5,
+            "boss_hp": 100,
+            "enemy_speed_vy": 3,
+            "enemy_speed_vx": 2,
+            "enemy_respawn_frequency": 100
+        },
+        {
+            "difficulty": "master",
+            "enemy_hp": 2,
+            "player_hp": 3,
+            "boss_hp": 120,
+            "enemy_speed_vy": 3.5,
+            "enemy_speed_vx": 2.5,
+            "enemy_respawn_frequency": 75
+        },
+        {
+            "difficulty": "grandmaster",
+            "enemy_hp": 3,
+            "player_hp": 3,
+            "boss_hp": 150,
+            "enemy_speed_vy": 3.5,
+            "enemy_speed_vx": 2.5,
+            "enemy_respawn_frequency": 50
+        }
+        
+        
+    ]
+    }
