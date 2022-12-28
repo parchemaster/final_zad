@@ -13,14 +13,15 @@
 
 <!-- <body onload="startGame()"> -->
 
-<body>
+<body onload="checkBackground();checkDifficulty()">
     <div class="container">
-        <div class="menu">
-            <a class="link" href = "game_d1.html">Jedi youngling</a>
-            <a class="link" href = "game_d2.html">Padawan</a>
-            <a class="link" href = "game_d3.html">Jedi knight</a>
-            <a class="link" href = "game_d4.html">Jedi master</a>
-            <a class="link" href = "game_d5.html">Jedi grandmaster</a>
+        <div class="menu" id="difficulty-div">
+            <a class="link" href="game_d1.html" id="difficulty">Jedi youngling</a>
+            <a class="link" href="game_d2.html" id="difficulty">Padawan</a>
+            <a class="link" href="game_d3.html" id="difficulty">Jedi knight</a>
+            <a class="link" href="game_d4.html" id="difficulty">Jedi master</a>
+            <a class="link" href="game_d5.html" id="difficulty">Jedi grandmaster</a>
+            <a class="link" href="menu.html">Menu</a>
         </div>
     </div>
 

@@ -6,12 +6,17 @@
     <script src="script.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.cdnfonts.com/css/star-wars" rel="stylesheet">
-
 </head>
 
-<body onload="startGyroscopeGame(1);checkBackground()">
 
-
+<body onload="checkBackground();checkBackground()">
+    <div class="container">
+    <div class="menu">
+        <p class="link">Congratulations! You cleared this level.</p>
+        <p class="link" onclick="BackToMenu();" style="cursor:pointer">Back to Menu</p>
+    </div>
+    </div>
 </body>
+
 
 </html>

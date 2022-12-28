@@ -4,13 +4,11 @@ canvas {
 }
 
 body {
-    width: 100%;
     height: 100vh;
-    margin: 0px;
-    border: 0;
-    overflow: hidden;
-  
+    width:100%;
+    margin:0;
     display: block;
+    overflow: hidden;
     background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80');
 }
 
@@ -24,11 +22,32 @@ body {
     margin-right: 30%;
 }
 
+.quests {
+    /* background-color: rgba(0, 0, 0, 0.314); */
+    padding: 5%;
+    border-radius: 25px;
+}
+
 .container {
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.level {
+    margin-bottom: 20%;
+    text-decoration: none;
+    padding: 2%;
+    border-radius: 5px;
+    text-align: center;
+    color: #FFE81F;
+    font-family: 'Star Wars', sans-serif;
+}
+
+#quest-status1,
+#quest-status2 {
+    color: greenyellow;
 }
 
 .link {
@@ -38,7 +57,7 @@ body {
     text-align: center;
     color: #FFE81F;
     font-family: 'Star Wars', sans-serif;
-    background-color: rgba(0, 0, 0, 0.819);
+    background-color: rgba(0, 0, 0, 0.893);
 }
 
 a:hover {
@@ -111,4 +130,39 @@ i {
     text-align: right;
     margin-top: 5px;
     font-weight: 300;
+}
+
+
+#checkbox,
+#music,
+#sound {
+    color: #FFE81F;
+    font-family: 'Star Wars', sans-serif;
+    width: 5%;
+}
+
+.checkbox-div {
+    display: flex;
+}
+
+.background-grid {
+    border: 1px solid black;
+    display: grid;
+    grid-gap: 3%;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-rows: 150px 150px;
+}
+
+.background-grid>div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    color: #ffeead;
+}
+
+.background-grid>div>img {
+    height: 100%;
+    width: 100%;
+
 }

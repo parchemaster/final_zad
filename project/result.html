@@ -9,12 +9,13 @@
 </head>
 
 
-<body onload="checkBackground();checkLevel()">
+<body onload="checkResult()">
     <div class="container">
         <div class="menu quests">
-            <p class="level" id="level"></p>
-            <p class="link">Kill 20 starfighters <a id="quest-status1"></a></p>
-            <p class="link">Destroy Death Star <a id="quest-status2"></a></p>
+            <p class="link">Total killed enemies: <a id="total"></a></p>
+            <p class="link">Maximum killed: <a id="max-killed"></a></p>
+            <p class="link">Maximum rank: <a id="max-rank"></a></p>
+            <p class="link">Death: <a id="max-death"></a></p>
             <a class="link" href="menu.html">Menu</a>
         </div>
     </div>
