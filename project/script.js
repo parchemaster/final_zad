@@ -1064,7 +1064,7 @@ function checkLevel() {
 
     if (user['quest1'] && user['quest2']) {
         var currentLevel = levels.levels.find(level => level['difficulty'] == user['difficulty']);
-        var nextIndex = levels.levels.indexOf(currentLevel) + 1
+        var nextIndex = levels.levels.indexOf(currentLevel) + 1;
         if (nextIndex <= 4) {
             console.log(levels.levels[nextIndex]['difficulty']);
             user['difficulty'] = levels.levels[nextIndex]['difficulty'];

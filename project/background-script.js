@@ -9,7 +9,12 @@ function changeBackground(element) {
         name: change_user['name'],
         score: change_user['score'],
         dies: change_user['dies'],
-        background: element.src
+        background: element.src,
+        difficulty: change_user['difficulty'],
+        quest1: change_user['quest1'],
+        quest2: change_user['quest2'],
+        total: change_user['total']
+        
     }
     window.localStorage.setItem('user', JSON.stringify(newUser));
 

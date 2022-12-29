@@ -149,8 +149,8 @@ i {
     border: 1px solid black;
     display: grid;
     grid-gap: 3%;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    grid-template-rows: 150px 150px;
+    grid-template-columns: repeat(auto-fit, minmax(33%, 1fr));
+    grid-template-rows: 33% 33%;
 }
 
 .background-grid>div {
@@ -158,11 +158,20 @@ i {
     justify-content: center;
     align-items: center;
     font-size: 2em;
+    
     color: #ffeead;
 }
 
 .background-grid>div>img {
     height: 100%;
     width: 100%;
+    
 
+}
+@media screen and(max-width: 600px) {
+    .background-grid {
+
+        grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+        grid-template-rows: 75px 75px;
+    }
 }
