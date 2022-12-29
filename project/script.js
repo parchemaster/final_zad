@@ -275,7 +275,7 @@ var myGameArea = {
         //const Quests = new Path2D();
         Menu.rect(this.canvas.width / 4, this.canvas.height / 2.2, this.canvas.width / 2, this.canvas.height / 12);
         GiveUp.rect(this.canvas.width / 4, this.canvas.height / 2.8, this.canvas.width / 2, this.canvas.height / 12);
-        //Quests.rect(this.canvas.width / 4, this.canvas.height / 1.8, this.canvas.width / 2, this.canvas.height / 12);
+        // Quests.rect(this.canvas.width / 4, this.canvas.height / 1.8, this.canvas.width / 2, this.canvas.height / 12);
         this.context.fillStyle = "#ffffff00";
         this.context.fill(Menu);
         this.context.fill(GiveUp);
@@ -291,7 +291,7 @@ var myGameArea = {
             else if (myGameArea.context.isPointInPath(GiveUp, event.offsetX, event.offsetY)) {
                 window.location.href = "game_is_over.html";
             }
-            
+
 
         });
 
@@ -308,7 +308,7 @@ function everyinterval(n) {
 function CheckIfDestroyed(obstacle) {
 
     var user = JSON.parse(window.localStorage.getItem('user'));
-    user['quest1'] = QuestKillMobs > 17 ? true : false;
+    user['quest1'] = QuestKillMobs > 3 ? true : false;
     localStorage.setItem("user", JSON.stringify(user));
 
 
@@ -333,7 +333,7 @@ function CheckIfDestroyed(obstacle) {
                     myObstacles[i].vy = -500;
                     myObstacles[i].width = -1;
                     myObstacles[i].height = -1;
-                   
+
                     obstacle.vx = -500;
                     obstacle.vy = -500;
                     obstacle.width = -1;
@@ -388,14 +388,14 @@ function CheckIfDestroyed(obstacle) {
                 obstacle.width = -1;
                 obstacle.height = -1;
                 updateScore();
-                
+
             }
         }
         if (myGamePiece.hp <= 0) {
             updateScore(1);
             myGameArea.clear();
             myGameArea.stop();
-            
+
             for (i = 0; i < myObstacles.length; i++) {
                 myObstacles[i].vx = -500;
                 myObstacles[i].vy = -500;
@@ -447,7 +447,7 @@ function CheckIfDestroyed(obstacle) {
                 var user = JSON.parse(window.localStorage.getItem('user'));
                 user['quest1'] = QuestKillMobs > 17 ? true : false;
                 localStorage.setItem("user", JSON.stringify(user));
-                
+
             }
         }
 
@@ -503,17 +503,17 @@ function updateGameArea() {
     }
 
     if (QuestKillMobs == 20) {
-            
 
-            updateScore();
-            myObstacles = [];
-            Weapons = [[]];
-            bossWeapon = [];
-            
-            myGameArea.clear();
-            myGameArea.stop();
-            
-            Congrats();
+
+        updateScore();
+        myObstacles = [];
+        Weapons = [[]];
+        bossWeapon = [];
+
+        myGameArea.clear();
+        myGameArea.stop();
+
+        Congrats();
     }
 
     if (QuestKillMobs == bossAppearKills && myBoss.Alive == false) {
@@ -748,16 +748,16 @@ function boss(width, height, url, x, y, type) {
     }
 
     this.hitBoundary = function () {
-        
+
         var boundaryright = myGameArea.canvas.width - this.width;
         var boundaryLeft = 0;
-     
+
         if (this.x <= boundaryLeft) {
-            
+
             this.direction = 1;
         }
         if (this.x >= boundaryright) {
-          
+
             this.direction = -1;
         }
     }
@@ -814,16 +814,16 @@ function enemy(width, height, url, x, y, type) {
     };
 
     this.hitBoundary = function () {
-       
+
         var boundaryright = myGameArea.canvas.width - this.width;
         var boundaryLeft = 0;
-        
+
         if (this.x <= boundaryLeft) {
-           
+
             this.direction = 1;
         }
         if (this.x >= boundaryright) {
-            
+
             this.direction = -1;
         }
     }
@@ -854,7 +854,7 @@ function ship(url, type) {
     }
 
     this.destroy = function () {
-        
+
         window.location.href = "game_is_over.html";
     }
     this.hpChange = function () {
@@ -955,7 +955,7 @@ function BackToMenu() {
 function GameIsOver() {
     window.location.href = "game_is_over.html";
 }
-function Congrats(){
+function Congrats() {
     window.location.href = "congratulations_game.html";
 }
 
@@ -1012,20 +1012,8 @@ function submiteForm() {
 
 function updateScore(die) {
     var user = JSON.parse(localStorage.getItem('user'));
-    // nickname = user['name']
     death = user['dies'];
     score = user['score'];
-    // back = user['background']
-    // level = user['difficulty']
-    // var newUser = {
-    //     name: nickname,
-    //     score: QuestKillMobs > score ? QuestKillMobs : score,
-    //     dies: death + die,
-    //     background: back,
-    //     difficulty: user['difficulty'],
-    //     quest1: user['quest1'],
-    //     quest2: user['quest2']
-    // }
     user['score'] = QuestKillMobs > score ? QuestKillMobs : score;
     user['dies'] = death + die;
     localStorage.setItem("user", JSON.stringify(user));
@@ -1058,13 +1046,12 @@ function checkLevel() {
     var levelField = document.getElementById('level');
     var levels = JSON.parse(window.localStorage.getItem('level'));
     var user = JSON.parse(window.localStorage.getItem('user'));
-    // user['quest1'] = QuestKillMobs > 10 ? true : false;
+    var currentLevel = levels.levels.find(level => level['difficulty'] == user['difficulty']);
+    var nextIndex = levels.levels.indexOf(currentLevel) + 1;
 
     levelField.textContent = user['difficulty'];
 
-    if (user['quest1'] && user['quest2']) {
-        var currentLevel = levels.levels.find(level => level['difficulty'] == user['difficulty']);
-        var nextIndex = levels.levels.indexOf(currentLevel) + 1;
+    if (user['quest1'] && user['quest2'] && nextIndex - 1 == number_difficulty_chosen) {
         if (nextIndex <= 4) {
             console.log(levels.levels[nextIndex]['difficulty']);
             user['difficulty'] = levels.levels[nextIndex]['difficulty'];
@@ -1075,10 +1062,10 @@ function checkLevel() {
 
         }
     }
-    if (user['quest1']) {
+    if (user['quest1'] && user['quest2'] && nextIndex - 1 == number_difficulty_chosen) {
         document.getElementById('quest-status1').textContent = "done";
     }
-    if (user['quest2']) {
+    if (user['quest2'] && user['quest2'] && nextIndex - 1 == number_difficulty_chosen) {
         document.getElementById('quest-status2').textContent = "done";
     }
 }
