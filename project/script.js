@@ -513,7 +513,7 @@ function updateGameArea() {
             myGameArea.clear();
             myGameArea.stop();
             
-            GameIsOver();
+            Congrats();
     }
 
     if (QuestKillMobs == bossAppearKills && myBoss.Alive == false) {
