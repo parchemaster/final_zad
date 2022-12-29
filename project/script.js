@@ -13,6 +13,8 @@ var bossAppearKills = 10;
 var bossWeapon = [];
 var number_difficulty_chosen = 0;
 var myMusic;
+var game_level = JSON.parse(window.localStorage.getItem('current-level'));
+
 
 
 
@@ -50,7 +52,7 @@ function d1() {
 
     number_difficulty_chosen = 0;
 
-    startGame();
+    startGame(number_difficulty_chosen);
 
 
 }
@@ -58,7 +60,7 @@ function d2() {
 
     number_difficulty_chosen = 1;
 
-    startGame();
+    startGame(number_difficulty_chosen);
 
 
 }
@@ -66,21 +68,21 @@ function d3() {
 
     number_difficulty_chosen = 2;
 
-    startGame();
+    startGame(number_difficulty_chosen);
 
 }
 function d4() {
 
     number_difficulty_chosen = 3;
 
-    startGame();
+    startGame(number_difficulty_chosen);
 
 }
 function d5() {
 
     number_difficulty_chosen = 4;
 
-    startGame();
+    startGame(number_difficulty_chosen);
 
 }
 
@@ -114,13 +116,15 @@ function startGyroscopeGame(x) {
             console.log(event.error.name, event.error.message);
         }
     }
-    startGame();
+    startGame(number_difficulty_chosen);
 }
 
 var current_level;
-function startGame() {
-    //console.log(number_difficulty_chosen);
-
+function startGame(current_difficult) {
+    console.log(game_level['level']);
+    console.log(number_difficulty_chosen);
+    game_level['level'] = current_difficult
+    localStorage.setItem("current-level", JSON.stringify(game_level))
 
     //fetchLevels();
     myGameArea.start();
@@ -272,14 +276,14 @@ var myGameArea = {
 
         const Menu = new Path2D();
         const GiveUp = new Path2D();
-        //const Quests = new Path2D();
+        const Quests = new Path2D();
         Menu.rect(this.canvas.width / 4, this.canvas.height / 2.2, this.canvas.width / 2, this.canvas.height / 12);
         GiveUp.rect(this.canvas.width / 4, this.canvas.height / 2.8, this.canvas.width / 2, this.canvas.height / 12);
-        // Quests.rect(this.canvas.width / 4, this.canvas.height / 1.8, this.canvas.width / 2, this.canvas.height / 12);
+        Quests.rect(this.canvas.width / 4, this.canvas.height / 1.8, this.canvas.width / 2, this.canvas.height / 12);
         this.context.fillStyle = "#ffffff00";
         this.context.fill(Menu);
         this.context.fill(GiveUp);
-        //this.context.fill(Quests);
+        this.context.fill(Quests);
 
 
         this.canvas.addEventListener('click', function (event) {
@@ -292,13 +296,11 @@ var myGameArea = {
                 window.location.href = "game_is_over.html";
             }
 
-
+            else if (myGameArea.context.isPointInPath(Quests, event.offsetX, event.offsetY)) {
+                window.location.href = "quests.html";
+            }
         });
-
-
     }
-
-
 }
 
 function everyinterval(n) {
@@ -1002,9 +1004,13 @@ function submiteForm() {
         total: 0
     }
 
+    const current_level = {
+        level: 0
+    }
+
     if (nickname) {
         window.localStorage.setItem('user', JSON.stringify(newUser));
-        // location.replace("menu.html")
+        localStorage.setItem('current-level', JSON.stringify(current_level))
         window.location.href = "menu.html";
 
     }
@@ -1051,7 +1057,7 @@ function checkLevel() {
 
     levelField.textContent = user['difficulty'];
 
-    if (user['quest1'] && user['quest2'] && nextIndex - 1 == number_difficulty_chosen) {
+    if (user['quest1'] && user['quest2'] && nextIndex - 1 == game_level.level['level']) {
         if (nextIndex <= 4) {
             console.log(levels.levels[nextIndex]['difficulty']);
             user['difficulty'] = levels.levels[nextIndex]['difficulty'];
@@ -1062,10 +1068,12 @@ function checkLevel() {
 
         }
     }
-    if (user['quest1'] && user['quest2'] && nextIndex - 1 == number_difficulty_chosen) {
+    console.log(nextIndex - 1)
+    console.log(current_level)
+    if (user['quest1'] && nextIndex - 1 == game_level.level['level']) {
         document.getElementById('quest-status1').textContent = "done";
     }
-    if (user['quest2'] && user['quest2'] && nextIndex - 1 == number_difficulty_chosen) {
+    if (user['quest2'] && nextIndex - 1 == game_level.level['level']) {
         document.getElementById('quest-status2').textContent = "done";
     }
 }
