@@ -121,6 +121,7 @@ function startGyroscopeGame(x) {
 
 var current_level;
 function startGame(current_difficult) {
+    // var game_level = JSON.parse(window.localStorage.getItem('current-level'));
     console.log(game_level['level']);
     console.log(number_difficulty_chosen);
     game_level['level'] = current_difficult
@@ -308,9 +309,11 @@ function everyinterval(n) {
     return false;
 }
 function CheckIfDestroyed(obstacle) {
-
+    var levels = JSON.parse(window.localStorage.getItem('level'));
     var user = JSON.parse(window.localStorage.getItem('user'));
-    user['quest1'] = QuestKillMobs > 3 ? true : false;
+    var currentLevel = levels.levels.find(level => level['difficulty'] == user['difficulty']);
+    var nextIndex = levels.levels.indexOf(currentLevel) + 1;
+    user['quest1'] = QuestKillMobs > 3 && nextIndex - 1 == game_level.level ? true : false;
     localStorage.setItem("user", JSON.stringify(user));
 
 
@@ -446,8 +449,11 @@ function CheckIfDestroyed(obstacle) {
                 obstacle.vy = -500;
                 obstacle.width = -1;
                 obstacle.height = -1;
+                var levels = JSON.parse(window.localStorage.getItem('level'));
                 var user = JSON.parse(window.localStorage.getItem('user'));
-                user['quest1'] = QuestKillMobs > 17 ? true : false;
+                var currentLevel = levels.levels.find(level => level['difficulty'] == user['difficulty']);
+                var nextIndex = levels.levels.indexOf(currentLevel) + 1;
+                user['quest1'] = QuestKillMobs > 17 && nextIndex - 1 == game_level.level ? true : false;
                 localStorage.setItem("user", JSON.stringify(user));
 
             }
@@ -1047,7 +1053,6 @@ function checkDifficulty() {
     }
 }
 
-
 function checkLevel() {
     var levelField = document.getElementById('level');
     var levels = JSON.parse(window.localStorage.getItem('level'));
@@ -1055,26 +1060,34 @@ function checkLevel() {
     var currentLevel = levels.levels.find(level => level['difficulty'] == user['difficulty']);
     var nextIndex = levels.levels.indexOf(currentLevel) + 1;
 
-    levelField.textContent = user['difficulty'];
+    var game_level = JSON.parse(window.localStorage.getItem('current-level'));
+    levelField.textContent = levels.levels[game_level.level].difficulty;
 
-    if (user['quest1'] && user['quest2'] && nextIndex - 1 == game_level.level['level']) {
-        if (nextIndex <= 4) {
-            console.log(levels.levels[nextIndex]['difficulty']);
-            user['difficulty'] = levels.levels[nextIndex]['difficulty'];
-            user['quest1'] = false;
-            user['quest2'] = false;
-            localStorage.setItem("user", JSON.stringify(user));
-            document.getElementById('level').textContent = user['difficulty'];
-
-        }
-    }
-    console.log(nextIndex - 1)
-    console.log(current_level)
-    if (user['quest1'] && nextIndex - 1 == game_level.level['level']) {
+    if (game_level.level < nextIndex - 1) {
         document.getElementById('quest-status1').textContent = "done";
-    }
-    if (user['quest2'] && nextIndex - 1 == game_level.level['level']) {
         document.getElementById('quest-status2').textContent = "done";
+    }
+
+    else {
+        if (user['quest1'] && user['quest2']) {
+            if (nextIndex <= 4) {
+                console.log(levels.levels[nextIndex]['difficulty']);
+                user['difficulty'] = levels.levels[nextIndex]['difficulty'];
+                user['quest1'] = false;
+                user['quest2'] = false;
+                localStorage.setItem("user", JSON.stringify(user));
+                // document.getElementById('level').textContent = user['difficulty'];
+
+            }
+        }
+        console.log(nextIndex - 1)
+        console.log(game_level.level)
+        if (user['quest1']) {
+            document.getElementById('quest-status1').textContent = "done";
+        }
+        if (user['quest2']) {
+            document.getElementById('quest-status2').textContent = "done";
+        }
     }
 }
 
